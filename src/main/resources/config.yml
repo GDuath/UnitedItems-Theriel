@@ -65,6 +65,42 @@ items:
 
 ##############################################
 # +----------------------------------------+ #
+# |                Brewing                 | #
+# +----------------------------------------+ #
+##############################################
+
+brewing_recipes:
+  test_potion:
+    permission: united.items.potion1
+    ingredient: 
+      item: "dungeons:charged_gunpowder"
+    base: 
+      item: SPLASH_POTION
+      type: STRONG_POISON  
+    result: 
+      item: POTION
+      type: LONG_SWIFTNESS
+  test_potion2:
+    permission: united.items.potion1
+    ingredient: 
+      item: POTION
+      type: STRONG_POISON  
+    base: 
+      item: SPLASH_POTION
+      type: NIGHT_VISION  
+    result: 
+      item: "dungeons:charged_gunpowder"
+  test_potion3:
+    ingredient: 
+      item: SPLASH_POTION
+    base: 
+      item: SPLASH_POTION
+    result: 
+      item: SPLASH_POTION
+      type: COMBINE
+
+##############################################
+# +----------------------------------------+ #
 # |                Language                | #
 # +----------------------------------------+ #
 ##############################################

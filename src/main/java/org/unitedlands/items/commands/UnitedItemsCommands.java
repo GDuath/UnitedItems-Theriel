@@ -27,6 +27,7 @@ public class UnitedItemsCommands implements CommandExecutor {
         if (args[0].equalsIgnoreCase("reload"))
         {
             plugin.reloadConfig();
+            plugin.getBrewingDetector().loadRecipes();
             sender.sendMessage("UnitedItems config reloaded");
         }
 
