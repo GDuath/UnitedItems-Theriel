@@ -46,6 +46,7 @@ public class ToolManager implements Listener {
         toolSets.put("gingerbread", new GingerbreadTools());
         toolSets.put("architects_wand", new ArchitectsWand(plugin));
         toolSets.put("telekinetic_wand", new TelekineticWand(plugin));
+        toolSets.put("luminous_wand", new LuminousWand(plugin, permissionsManager));
         toolSets.put("creeper_bow", new CreeperBow(plugin));
         toolSets.put("creeper_rocket", new CreeperRocket(plugin));
         toolSets.put("kraken_sabre", new KrakenSabre(plugin));
