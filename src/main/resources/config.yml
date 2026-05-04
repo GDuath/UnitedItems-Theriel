@@ -20,6 +20,7 @@ update:
 ##############################################
 
 items:
+
   telekinetic-wand:
     blacklist:
       - CHEST
@@ -33,6 +34,7 @@ items:
       - BREWING_STAND
       - DECORATED_POT
       - JUKEBOX
+
   architects-wand:
     CraftStair:
       - direction
@@ -71,15 +73,31 @@ items:
       - open
     CraftDoor:
       - open
+
   creeper_bow:
-    tnt_chance: 0.15
-    offset: 1
-    velocity_multiplier: 2.0
-    fuse-time: 
+    # Chance for any shot arrow will be explosive.
+    explosive-chance: 0.15
+    # Should explosive arrows damage blocks?
+    # When TRUE, explosive arrows destroy blocks in areas where the firer has permission to destroy.
+    enable-explosion-damage: TRUE
+    # Set explosion strength.
+    # 4.0 is around a standard TNT explosion.
+    explosion-strength: 4.0
+    # Velocity multiplier of explosive arrows.
+    # 1.0 is default, higher values make arrows faster.
+    velocity-multiplier: 1.0
+    # Sound effect for explosive arrows.
+    # Leave empty for no sound.
+    sound-effect: entity.creeper.primed
+    # Particle trail effects for explosive arrows.
+    # Leave empty for no particles.
+    particle-effect: smoke
+
   creeper_rocket:
     refill-item: "dungeons:charged_gunpowder"
     max-usages: 256
     usages-per-refill: 4
+
   kraken-armour:
     cooldown: 60 # in seconds
     assistant-commands:
@@ -92,9 +110,11 @@ items:
       Kraken_Tentacle_Assistant:
         amount: 1
         radius: 8
+
   kraken-sabre:
     lightning-chance: 1.0
     lightning-damage: 5
+
   banana-sabre:
     slip-chance: 1.0
     slip-strength: 5
