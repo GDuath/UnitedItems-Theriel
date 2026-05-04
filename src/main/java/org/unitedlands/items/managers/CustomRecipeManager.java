@@ -44,79 +44,79 @@ public class CustomRecipeManager implements Listener {
 
             if (event.getWhoClicked() instanceof Player player) {
 
+                var itemFactory = UnitedLib.getInstance().getItemFactory();
+
                 ConfigurationSection returnItemSection = plugin.getRecipeConfig().get()
                         .getConfigurationSection(id + ".return-items");
-                if (returnItemSection == null)
-                    return;
+                if (returnItemSection != null) {
 
-                HashMap<String, Integer> returnItems = new HashMap<>();
-                for (var itemSectionKey : returnItemSection.getKeys(false)) {
-                    var itemId = returnItemSection.getString(itemSectionKey + ".item");
-                    if (itemId != null && !itemId.isEmpty())
-                        returnItems.put(itemId, returnItemSection.getInt(itemSectionKey + ".damage", 0));
-                }
+                    HashMap<String, Integer> returnItems = new HashMap<>();
+                    for (var itemSectionKey : returnItemSection.getKeys(false)) {
+                        var itemId = returnItemSection.getString(itemSectionKey + ".item");
+                        if (itemId != null && !itemId.isEmpty())
+                            returnItems.put(itemId, returnItemSection.getInt(itemSectionKey + ".damage", 0));
+                    }
 
-                var itemFactory = UnitedLib.getInstance().getItemFactory();
-                var inv = event.getInventory();
-                HashSet<ItemStack> itemsToReturn = new HashSet<>();
-                for (var i = 0; i < inv.getSize(); i++) {
-                    var item = inv.getItem(i);
-                    if (item != null) {
+                    var inv = event.getInventory();
+                    HashSet<ItemStack> itemsToReturn = new HashSet<>();
+                    for (var i = 0; i < inv.getSize(); i++) {
+                        var item = inv.getItem(i);
+                        if (item != null) {
 
-                        var invItemId = itemFactory.getId(item);
-                        if (returnItems.containsKey(invItemId)) {
-                            var damage = returnItems.get(invItemId);
-                            if (damage != 0 && item.getItemMeta() instanceof Damageable damageable) {
-                                var currentDamage = 0;
-                                if (damageable.hasDamageValue()) {
-                                    currentDamage = damageable.getDamage();
+                            var invItemId = itemFactory.getId(item);
+                            if (returnItems.containsKey(invItemId)) {
+                                var damage = returnItems.get(invItemId);
+                                if (damage != 0 && item.getItemMeta() instanceof Damageable damageable) {
+                                    var currentDamage = 0;
+                                    if (damageable.hasDamageValue()) {
+                                        currentDamage = damageable.getDamage();
+                                    }
+
+                                    var newDamage = currentDamage + damage;
+                                    damageable.setDamage(newDamage);
+                                    item.setItemMeta(damageable);
                                 }
 
-                                var newDamage = currentDamage + damage;
-                                damageable.setDamage(newDamage);
-                                item.setItemMeta(damageable);
+                                itemsToReturn.add(item);
                             }
-
-                            itemsToReturn.add(item);
                         }
                     }
-                }
 
-                for (var item : itemsToReturn) {
-                    HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(item);
-                    for (var leftoverItem : leftover.entrySet())
-                        player.getLocation().getWorld().dropItemNaturally(player.getLocation(),
-                                leftoverItem.getValue());
+                    for (var item : itemsToReturn) {
+                        HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(item);
+                        for (var leftoverItem : leftover.entrySet())
+                            player.getLocation().getWorld().dropItemNaturally(player.getLocation(),
+                                    leftoverItem.getValue());
+                    }
                 }
 
                 ConfigurationSection additionalItemSection = plugin.getRecipeConfig().get()
                         .getConfigurationSection(id + ".additional-items");
-                if (additionalItemSection == null)
-                    return;
+                if (additionalItemSection != null) {
 
-                HashMap<String, Integer> additionaltems = new HashMap<>();
-                for (var itemSectionKey : additionalItemSection.getKeys(false)) {
-                    var itemId = additionalItemSection.getString(itemSectionKey + ".item");
-                    if (itemId != null && !itemId.isEmpty())
-                        additionaltems.put(itemId, additionalItemSection.getInt(itemSectionKey + ".amount", 0));
-                }
+                    HashMap<String, Integer> additionaltems = new HashMap<>();
+                    for (var itemSectionKey : additionalItemSection.getKeys(false)) {
+                        var itemId = additionalItemSection.getString(itemSectionKey + ".item");
+                        if (itemId != null && !itemId.isEmpty())
+                            additionaltems.put(itemId, additionalItemSection.getInt(itemSectionKey + ".amount", 0));
+                    }
 
-                if (additionaltems.size() > 0) {
-                    for (var additionalItem : additionaltems.entrySet()) {
-                        var amount = additionalItem.getValue();
-                        if (amount > 0) {
-                            var item = itemFactory.getItemStack(additionalItem.getKey(), amount);
-                            if (item != null) {
-                                HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(item);
-                                for (var leftoverItem : leftover.entrySet())
-                                    player.getLocation().getWorld().dropItemNaturally(player.getLocation(),
-                                            leftoverItem.getValue());
+                    if (additionaltems.size() > 0) {
+                        for (var additionalItem : additionaltems.entrySet()) {
+                            var amount = additionalItem.getValue();
+                            if (amount > 0) {
+                                var item = itemFactory.getItemStack(additionalItem.getKey(), amount);
+                                if (item != null) {
+                                    HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(item);
+                                    for (var leftoverItem : leftover.entrySet())
+                                        player.getLocation().getWorld().dropItemNaturally(player.getLocation(),
+                                                leftoverItem.getValue());
 
+                                }
                             }
                         }
                     }
                 }
-
             }
         }
     }
