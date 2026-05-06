@@ -2,7 +2,11 @@ package org.unitedlands.items.managers;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.unitedlands.UnitedLib;
 import org.unitedlands.items.UnitedItems;
+import org.unitedlands.utils.Logger;
 
 public class CustomRecipeManager implements Listener {
 
@@ -58,15 +63,18 @@ public class CustomRecipeManager implements Listener {
                     }
 
                     var inv = event.getInventory();
-                    HashSet<ItemStack> itemsToReturn = new HashSet<>();
+                    Map<Integer, ItemStack> itemsToReturn = new HashMap<>();
+
                     for (var i = 0; i < inv.getSize(); i++) {
                         var item = inv.getItem(i);
                         if (item != null) {
 
                             var invItemId = itemFactory.getId(item);
                             if (returnItems.containsKey(invItemId)) {
+
                                 var damage = returnItems.get(invItemId);
                                 if (damage != 0 && item.getItemMeta() instanceof Damageable damageable) {
+
                                     var currentDamage = 0;
                                     if (damageable.hasDamageValue()) {
                                         currentDamage = damageable.getDamage();
@@ -77,17 +85,18 @@ public class CustomRecipeManager implements Listener {
                                     item.setItemMeta(damageable);
                                 }
 
-                                itemsToReturn.add(item);
+                                itemsToReturn.put(i, item.clone());
+
                             }
                         }
                     }
 
-                    for (var item : itemsToReturn) {
-                        HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(item);
-                        for (var leftoverItem : leftover.entrySet())
-                            player.getLocation().getWorld().dropItemNaturally(player.getLocation(),
-                                    leftoverItem.getValue());
+                    for (var entrySet : itemsToReturn.entrySet()) {
+                        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                            inv.setItem(entrySet.getKey(), entrySet.getValue());
+                        }, 1);
                     }
+
                 }
 
                 ConfigurationSection additionalItemSection = plugin.getRecipeConfig().get()
