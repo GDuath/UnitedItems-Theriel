@@ -3,10 +3,7 @@ package org.unitedlands.items.managers;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,7 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.unitedlands.UnitedLib;
 import org.unitedlands.items.UnitedItems;
-import org.unitedlands.utils.Logger;
 
 public class CustomRecipeManager implements Listener {
 
