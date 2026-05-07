@@ -32,6 +32,7 @@ import org.unitedlands.utils.Logger;
 
 import com.gamingmesh.jobs.Jobs;
 import com.gamingmesh.jobs.actions.ItemActionInfo;
+import com.gamingmesh.jobs.commands.list.points;
 import com.gamingmesh.jobs.container.ActionType;
 
 import net.kyori.adventure.text.Component;
@@ -90,6 +91,34 @@ public class BrewingManager implements Listener {
             if (inv.getItem(0) == null && inv.getItem(1) == null && inv.getItem(2) == null)
                 return;
 
+            var basePotionSet = new ArrayList<ItemStack>();
+            if (inv.getItem(0) != null)
+                basePotionSet.add(inv.getItem(0));
+            if (inv.getItem(1) != null)
+                basePotionSet.add(inv.getItem(1));
+            if (inv.getItem(2) != null)
+                basePotionSet.add(inv.getItem(2));
+
+            if (basePotionSet.isEmpty())
+                return;
+
+            // If all of the provided base potions are vanilla, assume the player is
+            // doing vanilla brewing. This will prevent awkward potions if custom recipes
+            // happen to use the same ingredient as a vanilla recipe.
+            // Exception is if the base potions are all awkward potions.
+            if (!isCustomBase(basePotionSet)) {
+                boolean allAwkwardPotions = true;
+                for (var item : basePotionSet) {
+                    if (item == null)
+                        continue;
+                    if (item.getItemMeta() instanceof PotionMeta potionMeta) {
+                        allAwkwardPotions = allAwkwardPotions && (potionMeta.getBasePotionType() == PotionType.AWKWARD);
+                    }
+                }
+                if (!allAwkwardPotions)
+                    return;
+            }
+
             ItemStack cursor = e.getCursor();
             if (cursor != null && cursor.getType() != Material.AIR) {
 
@@ -131,6 +160,15 @@ public class BrewingManager implements Listener {
             }
 
         }
+    }
+
+    private boolean isCustomBase(List<ItemStack> set) {
+        IItemFactory itemFactory = UnitedLib.getInstance().getItemFactory();
+        boolean anyCustom = false;
+        for (var item : set) {
+            anyCustom = anyCustom || (item != null && itemFactory.isCustomItem(item));
+        }
+        return anyCustom;
     }
 
     private List<BrewingRecipe> getMatchingRecipes(Player player, ItemStack item) {
